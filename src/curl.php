@@ -71,7 +71,6 @@ class Curl {
     private $ssl_cert_type = 'pem';
 
 
-
     public function __construct($config = array()) {
         if (!empty($config)) {
             foreach ($config as $key => $val) {
