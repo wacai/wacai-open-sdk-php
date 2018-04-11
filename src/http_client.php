@@ -6,7 +6,7 @@ require_once './utils.php';
 require_once './local_cache.php';
 require_once './token_service.php';
 
-class ClientApi
+class HttpClient
 {
     private $api_name;
     private $api_version;
@@ -29,7 +29,7 @@ class ClientApi
      * @param bool $is_debug 是否开启调试
      * @param ref $res response结果
      */
-    public function http_post($json_data, $is_debug = false, &$res)
+    public function http_post_json($json_data, $is_debug = false, &$res)
     {
         // 业务数据md
         $body_md5 = base64_encode(md5($json_data, true));
