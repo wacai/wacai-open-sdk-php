@@ -1,9 +1,9 @@
 <?php
-require_once dirname(__DIR__) . '/framework/libs/curl.php';
-require_once dirname(__DIR__) . '/framework/libs/base64.php';
+require_once dirname(__DIR__) . '/libs/curl.php';
+require_once dirname(__DIR__) . '/libs/base64.php';
 require_once dirname(__DIR__) . '/config/web_config.php';
-require_once dirname(__DIR__) . '/framework/libs/utils.php';
-require_once dirname(__DIR__) . '/framework/libs/cache/local_cache.php';
+require_once dirname(__DIR__) . '/libs/utils.php';
+require_once dirname(__DIR__) . '/libs/cache/local_cache.php';
 require_once dirname(__DIR__). '/token/token_service.php';
 
 class HttpClient

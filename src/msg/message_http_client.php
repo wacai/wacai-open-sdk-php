@@ -1,8 +1,8 @@
 <?php
 define("WEBPATH", str_replace("\\", "/", __DIR__));
-require_once dirname(__DIR__) . "/framework/libs/lib_config.php";
-require_once dirname(__DIR__) . "/framework/libs/utils.php";
-require_once dirname(__DIR__) . "/framework/libs/base64.php";
+require_once dirname(__DIR__) . "/libs/lib_config.php";
+require_once dirname(__DIR__) . "/libs/utils.php";
+require_once dirname(__DIR__) . "/libs/base64.php";
 require_once dirname(__DIR__) . "/config/web_config.php";
 require_once "encoders/body_encoder_decoder.php";
 require_once "encoders/frame_encoder_decoder.php";

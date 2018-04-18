@@ -1,11 +1,10 @@
 <?php
-
 class  WebConfig
 {
     // API网关地址
-    const GW_URL = "http://guard-boot.loan.k2.test.wacai.info/gw/api_entry";
+    const GW_URL = "http://open.wacaiyun.com/gw/api_entry";//"http://guard-boot.loan.k2.test.wacai.info/gw/api_entry";
     // API_网关_Token获取地址
-    const GW_TOKEN_URL = "http://open-token-boot.loan.k2.test.wacai.info/token/auth";
+    const GW_TOKEN_URL = "http://open.wacaiyun.com/token/auth";//"http://open-token-boot.loan.k2.test.wacai.info/token/auth";
     // 消息网关地址
     const GW_MESSAGE_URL = "baige-bridge-8888.loan.k2.test.wacai.info";
     // 消息网关端口
