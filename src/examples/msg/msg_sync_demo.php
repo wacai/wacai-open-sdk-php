@@ -1,4 +1,5 @@
 <?php
+//拉取消息和消息确认分开2个接口
 require_once dirname(dirname(__DIR__)) . "/msg/entities/header.php";
 require_once dirname(dirname(__DIR__)) . "/msg/entities/message.php";
 require_once dirname(dirname(__DIR__)) . "/msg/entities/body.php";

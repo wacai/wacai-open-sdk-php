@@ -1,4 +1,5 @@
 <?php
+// 消费消息,支持回调函数(返回true/false)
 require_once dirname(dirname(__DIR__)) . "/msg/entities/header.php";
 require_once dirname(dirname(__DIR__)) . "/msg/entities/message.php";
 require_once dirname(dirname(__DIR__)) . "/msg/entities/body.php";

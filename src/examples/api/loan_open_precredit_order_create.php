@@ -1,4 +1,5 @@
 <?php
+// 测试快贷业务接口 loan.open.precredit.order.create
 require_once dirname(dirname(__DIR__)) . '/api/http_client.php';
 // 调用的API接口(for Demo测试)
 $api_name = "loan.open.precredit.order.create";
