@@ -45,6 +45,8 @@ var_dump($res);
 - 修改地址(生产环境),系统上线时，需要修改消息网关地址和端口(在web_config.php中修改)
 
 ### 使用实例
+#### 同步调用
+拉取消息和消息确认分开2个接口，详细见下面的代码：
 ```php
 <?php
 require_once dirname(dirname(__DIR__)) . "/msg/entities/header.php";
@@ -69,5 +71,6 @@ var_dump($resp_header);
 print_r(">>>End ack\r\n");
 ?>
 ```
+调用结果图例(for-demo)
 ![消息的拉取和确认调用结果图例](/src/doc/images/message_demo.png)
 
