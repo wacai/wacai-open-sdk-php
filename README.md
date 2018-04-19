@@ -69,5 +69,5 @@ var_dump($resp_header);
 print_r(">>>End ack\r\n");
 ?>
 ```
-![消息的拉取和确认调用结果图例](/doc/images/message_demo.png)
+![消息的拉取和确认调用结果图例](/src/doc/images/message_demo.png)
 
