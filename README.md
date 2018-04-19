@@ -45,7 +45,7 @@ var_dump($res);
 - 修改地址(生产环境),系统上线时，需要修改消息网关地址和端口(在web_config.php中修改)
 
 ### 使用实例
-#### 同步调用(拉取消息和消息确认分开2个接口)
+#### 同步调用一(拉取消息和消息确认分开2个接口)
 详细见下面的代码：
 ```php
 <?php
@@ -71,11 +71,34 @@ var_dump($resp_header);
 print_r(">>>End ack\r\n");
 ?>
 ```
-消息的拉取和确认-调用结果图例(for-demo)
-![消息的拉取和确认调用结果图例](/src/doc/images/message_demo.png)
+消息的拉取和确认-调用结果(for-demo)
+```json
+>>>Start pull
+object(Message)#16 (5) {
+  ["msg_key_length"]=>
+  int(5)
+  ["msg_key"]=>
+  string(5) "dummy"
+  ["msg_offset"]=>
+  int(9030)
+  ["payload_length"]=>
+  int(119)
+  ["payload"]=>
+  string(119) "{"category":"apiInfo","eventType":"U","properties":{"apiName":"wacai.withhold.bind.card.confirm","apiVersion":"1.1.1"}}"
+}
+>>>End pull
+>>>Start ack
+Ack result:object(AckResult)#15 (2) {
+  ["is_ok"]=>
+  string(4) "true"
+  ["error_message"]=>
+  string(0) ""
+}
+>>>End ack
+```
 
 
-#### 同步调用(消费消息,支持回调函数(返回true/false))
+#### 同步调用二(消费消息,支持回调函数(返回true/false))
 回调函数由消费方提供，回调函数须返回true/false(true:消费成功,false:消费失败)，详细见下面的代码：
 ```php
 <?php
@@ -105,4 +128,13 @@ function consume_message($message_content){
 ?>
 ```
 消息消费-调用结果图例(for-demo)
-![消息消费](/src/doc/images/consume_mssage_demo.png)
+```json
+>>>Start consume
+object(AckResult)#15 (2) {
+  ["is_ok"]=>
+  string(4) "true"
+  ["error_message"]=>
+  string(0) ""
+}
+>>>End consume
+```

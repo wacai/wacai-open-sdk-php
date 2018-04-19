@@ -6,7 +6,7 @@ class  WebConfig
     // API_网关_Token获取地址
     const GW_TOKEN_URL = "http://open.wacaiyun.com/token/auth";//"http://open-token-boot.loan.k2.test.wacai.info/token/auth";
     // 消息网关地址
-    const GW_MESSAGE_URL = "baige-bridge-8888.loan.k2.test.wacai.info";//ws://open.wacaiyun.com/ws,"baige-bridge-8888.loan.k2.test.wacai.info";
+    const GW_MESSAGE_URL = "baige-bridge-8888.loan.k2.test.wacai.info";//ws://open.wacaiyun.com/ws;
     // 消息网关端口
     const GW_MESSAGE_URL_PORT = 80;
     // App_key(for测试)
