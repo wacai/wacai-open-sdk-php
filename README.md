@@ -45,8 +45,8 @@ var_dump($res);
 - 修改地址(生产环境),系统上线时，需要修改消息网关地址和端口(在web_config.php中修改)
 
 ### 使用实例
-#### 同步调用
-拉取消息和消息确认分开2个接口，详细见下面的代码：
+#### 同步调用(拉取消息和消息确认分开2个接口)
+详细见下面的代码：
 ```php
 <?php
 require_once dirname(dirname(__DIR__)) . "/msg/entities/header.php";
@@ -71,6 +71,38 @@ var_dump($resp_header);
 print_r(">>>End ack\r\n");
 ?>
 ```
-调用结果图例(for-demo)
+消息的拉取和确认-调用结果图例(for-demo)
 ![消息的拉取和确认调用结果图例](/src/doc/images/message_demo.png)
 
+
+#### 同步调用(消费消息,支持回调函数(返回true/false))
+回调函数由消费方提供，回调函数须返回true/false(true:消费成功,false:消费失败)，详细见下面的代码：
+```php
+<?php
+require_once dirname(dirname(__DIR__)) . "/msg/entities/header.php";
+require_once dirname(dirname(__DIR__)) . "/msg/entities/message.php";
+require_once dirname(dirname(__DIR__)) . "/msg/entities/body.php";
+require_once dirname(dirname(__DIR__)) . "/msg/entities/frame.php";
+require_once dirname(dirname(__DIR__)) . "/msg/message_http_client.php";
+
+//(for internal testing)
+$topic = "middleware.guard.cache";
+$messageClient = new HttpClientMessage();
+print_r(">>>Start consume\r\n");
+$result = $messageClient->consume($topic,"consume_message");
+var_dump($result);
+print_r(">>>End consume\r\n");
+
+/**
+* 业务处理函数,
+* Message处理成功返回true(此时消息ack成功),否则返回false
+*/
+function consume_message($message_content){
+	var_dump($message_content);
+	// 业务逻辑处理...
+	return true;
+}
+?>
+```
+消息消费-调用结果图例(for-demo)
+![消息消费](/src/doc/images/consume_mssage_demo.png)

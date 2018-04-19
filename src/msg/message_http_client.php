@@ -142,6 +142,32 @@ class HttpClientMessage
         return $frame;
     }
 
+    public function consume($topic,$function){
+         if (empty($topic)) {
+            die("Topic is nul(Consume)");
+        }
+        
+        $ack_result = null;
+        $message = $this->pull($topic);
+        if(!empty($message)){
+            $payload = $message->payload;
+            $offset = $message->msg_offset;
+            // invoke user function
+            if(!empty($payload)){
+                $params = array($payload);//传给参数的值
+                $callback_result = call_user_func_array($function,$params); 
+            }
+            if($callback_result===true){
+                $ack_result = $this->ack($topic,$offset);
+            }else{
+                $ack_result = new AckResult();
+                $ack_result->error_message = "Invoke call_user_func error";
+            }
+        }
+
+        return $ack_result;
+    }
+
     private function sync($header, $body, $flag = null)
     {
         $frame = null;
