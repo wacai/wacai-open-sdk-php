@@ -1,7 +1,7 @@
 <?php
 require_once "../entities/header.php";
 require_once "../encoders/header_encoder_decoder.php";
-require_once dirname(dirname(__DIR__)) . "/framework/libs/utils.php";
+require_once dirname(dirname(__DIR__)) . "/libs/utils.php";
 
 $header = new MessageHeader();
 $header->flag = 1;

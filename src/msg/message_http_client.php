@@ -4,6 +4,7 @@ require_once dirname(__DIR__) . "/libs/lib_config.php";
 require_once dirname(__DIR__) . "/libs/utils.php";
 require_once dirname(__DIR__) . "/libs/base64.php";
 require_once dirname(__DIR__) . "/config/web_config.php";
+require_once "entities/ack_result.php";
 require_once "encoders/body_encoder_decoder.php";
 require_once "encoders/frame_encoder_decoder.php";
 
@@ -75,13 +76,20 @@ class HttpClientMessage
         $ext_fields["offset"] = $offset;
         $header->ext_fields = $ext_fields;
 
-        $resp_header = null;
+        $ack_result = new AckResult();
         $frame = $this->sync($header, null, "Ack");
         if (!empty($frame)) {
             $resp_header = $frame->header;
+            $ext_fields = $resp_header->ext_fields;
+            if (!empty($ext_fields) && count($ext_fields) > 0) {
+                $ack_result->is_ok = $ext_fields["ackSuccess"];
+                if (!$ack_result->is_ok) {
+                    $ack_result->error_message = $ext_fields["ackFailReason"];
+                }
+            }
         }
 
-        return $resp_header;
+        return $ack_result;
     }
 
     /**
