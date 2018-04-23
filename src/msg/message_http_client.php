@@ -61,7 +61,7 @@ class HttpClientMessage
         if (empty($topic)) {
             die("topic is nul(ack)");
         }
-        if (empty($offset) || !is_numeric($offset)) {
+        if (!is_numeric($offset)) {
             die("offset is invalid(ack)");
         }
 
