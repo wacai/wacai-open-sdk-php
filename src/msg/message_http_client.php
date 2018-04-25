@@ -214,7 +214,7 @@ class HttpClientMessage
         $auth_header = $this->get_auth_header();
         $this->client = new Swoole\Client\WebSocket(WebConfig::GW_MESSAGE_URL
             , WebConfig::GW_MESSAGE_URL_PORT
-            , '/ws'
+            , WebConfig::GW_MESSAGE_URL_PATH
             , $auth_header);
 
         if (!$this->client->connect()) {

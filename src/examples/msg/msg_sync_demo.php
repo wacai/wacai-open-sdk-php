@@ -7,7 +7,7 @@ require_once dirname(dirname(__DIR__)) . "/msg/entities/frame.php";
 require_once dirname(dirname(__DIR__)) . "/msg/message_http_client.php";
 
 //(for internal testing)
-$topic = "middleware.guard.cache";
+$topic = "loan.open.scene.user.credit.xhj";//"middleware.guard.cache";
 $messageClient = new HttpClientMessage();
 print_r(">>>Start pull\r\n");
 $message = $messageClient->pull($topic);
