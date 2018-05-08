@@ -29,11 +29,15 @@ class TokenService
         REFRESH_TOKEN_EXPIRED(10013, "refresh_token已过期"),;
         */
         $error = json_decode($res);
-        $code = $error->{'code'};
-        $error_message = $error->{'error'};
-        // token过期
-        if ($code == '10011' || $code == '10013') {
-            return true;
+        if(property_exists($error, 'error')){
+             $error_message = $error->{'error'};
+        }
+        if(property_exists($error, 'code')){
+            $code = $error->{'code'};
+            // token过期
+            if ($code == '10011' || $code == '10013') {
+                return true;
+            }
         }
         return false;
     }

@@ -34,7 +34,6 @@ class HttpClient
         $body_md5 = '';
         if (!isset($json_data) || strlen($json_data) == 0) {
             $body_md5 = "1B2M2Y8AsgTpgAmY7PhCfg==";
-            //$json_data= pack("a","");
         } else {
             // 业务数据md
             $body_md5 = base64_encode(md5($json_data, true));
@@ -43,6 +42,11 @@ class HttpClient
         // 时间戳
         $time_stamp = Util::getMillisecond();
 
+        // 如果$this->token为非token对象，则再次获取token
+        if(!is_object($this->token)){
+            $this->token = $this->token_service->getToken();
+        }
+        // access token
         $access_token = $this->token->getAccessToken();
         // http-header
         $param_header = [
