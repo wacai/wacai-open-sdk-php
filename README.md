@@ -138,3 +138,9 @@ object(AckResult)#15 (2) {
 }
 >>>End consume
 ```
+
+### 注意事项
+调用API接口需要鉴权，这个过程中会使用到Token, 根据app_key/app_secret获取访问access_token, 
+接下来访问时，会自动带上access_token, 如果access_token 过期或失效，会再次请求进行token获取置换，在此过程中，需要注意两点：
+- 为了提高性能，获取到token尽量放在分布式缓存(memcache/redis)中，考虑到各个接入方技术栈不同，难以强制统一，本demo中access_token放在服务器内存中；
+- 如果access_token 过期或失效，SDK会自动进行token获取置换，但不会自动发起请求重试操作，请求重试，由调用方发起；
