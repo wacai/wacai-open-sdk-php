@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\msg\entities;
 /**
  * 消息(单个消息)
  * Class Message

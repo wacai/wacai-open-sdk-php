@@ -1,4 +1,5 @@
 <?php
+namespace wacai\open\config;
 class  WebConfig
 {
     // API网关地址

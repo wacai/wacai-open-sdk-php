@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\lib;
 /**
  * curl封装
  */

@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\msg\entities;
 /**
  * Ack result
  */

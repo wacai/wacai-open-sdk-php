@@ -6,7 +6,7 @@ $api_name = "loan.open.precredit.order.create";
 // 调用的API版本(for Demo测试)
 $api_version = "1.0.0";
 // Http Client Api初始化
-$client_api = new HttpClient($api_name, $api_version);
+$client_api = new wacai\open\api\HttpClient($api_name, $api_version);
 // 业务参数-json格式(for Demo测试)
 $body_data = '{
   "order_info": {

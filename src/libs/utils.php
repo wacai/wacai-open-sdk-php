@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\lib;
 class Util
 {
     // 生成(当前时间戳，以毫秒为单位)

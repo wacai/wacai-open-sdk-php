@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\lib\cache;
 /**
  * Local cache
  * Class LocalCache

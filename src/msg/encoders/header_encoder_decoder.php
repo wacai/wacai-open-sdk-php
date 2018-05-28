@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\msg\encoders;
 /**
  * Class HeaderEncoder
  */

@@ -1,4 +1,5 @@
 <?php
+namespace wacai\open\msg\encoders;
 require_once "message_encoder_decoder.php";
 
 class BodyEncoder

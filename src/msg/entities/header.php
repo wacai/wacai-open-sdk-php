@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\msg\entities;
 /**
  * Header
  * Class MessageHeader

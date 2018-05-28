@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\token;
 class Token
 {
     private $access_token;

@@ -8,7 +8,7 @@ require_once dirname(dirname(__DIR__)) . "/msg/message_http_client.php";
 
 //(for internal testing)
 $topic = "middleware.guard.cache";//"middleware.guard.cache";
-$messageClient = new HttpClientMessage();
+$messageClient = new \wacai\open\msg\HttpClientMessage();
 print_r(">>>Start pull\r\n");
 $message = $messageClient->pull($topic);
 var_dump($message);

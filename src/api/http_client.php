@@ -1,4 +1,5 @@
 <?php
+namespace wacai\open\api;
 require_once dirname(__DIR__) . '/libs/curl.php';
 require_once dirname(__DIR__) . '/libs/base64.php';
 require_once dirname(__DIR__) . '/config/web_config.php';
@@ -19,7 +20,7 @@ class HttpClient
         $this->api_name = $api_name;
         $this->api_version = $api_version;
         // token初始化
-        $this->token_service = new TokenService();
+        $this->token_service = new \wacai\open\token\TokenService();
         $this->token = $this->token_service->getToken();
     }
 
@@ -40,7 +41,7 @@ class HttpClient
         }
 
         // 时间戳
-        $time_stamp = Util::getMillisecond();
+        $time_stamp = \wacai\open\lib\Util::getMillisecond();
 
         // 如果$this->token为非token对象，则再次获取token
         if(!is_object($this->token)){
@@ -50,7 +51,7 @@ class HttpClient
         $access_token = $this->token->getAccessToken();
         // http-header
         $param_header = [
-            'x-wac-version' => WebConfig::X_WAC_VERSION,
+            'x-wac-version' => \wacai\open\config\WebConfig::X_WAC_VERSION,
             'x-wac-timestamp' => $time_stamp,
             'x-wac-access-token' => $access_token,
         ];
@@ -66,11 +67,11 @@ class HttpClient
         // 待签名的数据
         $strToSign = $this->api_name . '|' . $this->api_version . '|' . $headerString . '|' . $body_md5;
         // 签名(signature)
-        $signature = Base64::base64url_encode(hash_hmac('sha256', $strToSign, WebConfig::APP_SECRET, true));
+        $signature = \wacai\open\lib\Base64::base64url_encode(hash_hmac('sha256', $strToSign, \wacai\open\config\WebConfig::APP_SECRET, true));
 
-        $curl = new \Curl();
+        $curl = new \wacai\open\lib\Curl();
         // 设置请求的header
-        $curl->add_header("x-wac-version: " . WebConfig::X_WAC_VERSION);
+        $curl->add_header("x-wac-version: " .\wacai\open\config\WebConfig::X_WAC_VERSION);
         $curl->add_header("x-wac-timestamp: " . $time_stamp);
         $curl->add_header("x-wac-access-token: " . $access_token);
         $curl->add_header("x-wac-signature: " . $signature);
@@ -78,9 +79,9 @@ class HttpClient
         $curl->set_verbose($is_debug);
 
         // 业务请求
-        $uri = WebConfig::GW_URL . '/' . $this->api_name . '/' . $this->api_version;
+        $uri = \wacai\open\config\WebConfig::GW_URL . '/' . $this->api_name . '/' . $this->api_version;
 
-        $err = $curl->http_post_json($uri, $json_data, $res, false, WebConfig::DEFAULT_ENCODING);
+        $err = $curl->http_post_json($uri, $json_data, $res, false, \wacai\open\config\WebConfig::DEFAULT_ENCODING);
         if ($err != NULL) {
             throw new Exception("请求出错" . $res);
         } else {

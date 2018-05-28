@@ -1,4 +1,5 @@
 <?php
+namespace wacai\open\msg\encoders;
 require_once dirname(__DIR__) . "/entities/body.php";
 require_once "header_encoder_decoder.php";
 require_once "body_encoder_decoder.php";

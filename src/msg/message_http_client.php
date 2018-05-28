@@ -1,4 +1,5 @@
 <?php
+namespace wacai\open\msg;
 define("WEBPATH", str_replace("\\", "/", __DIR__));
 require_once dirname(__DIR__) . "/libs/lib_config.php";
 require_once dirname(__DIR__) . "/libs/utils.php";

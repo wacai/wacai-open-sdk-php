@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\lib;
 class Base64
 {
     public static function base64url_encode($data)

@@ -1,4 +1,5 @@
 <?php
+namespace wacai\open\token;
 require_once dirname(__DIR__) . '/libs/curl.php';
 require_once dirname(__DIR__) . '/libs/base64.php';
 require_once dirname(__DIR__) . '/config/web_config.php';
@@ -13,7 +14,7 @@ class TokenService
 
     public function getToken($is_force_expire = FALSE)
     {
-        return LocalCache::getInstance()->get($this, 'fetch', ['token'], $is_force_expire);
+        return \wacai\open\lib\cache\LocalCache::getInstance()->get($this, 'fetch', ['token'], $is_force_expire);
     }
 
     /**检查token是否过期或无效
@@ -50,9 +51,9 @@ class TokenService
     public function fetch($flag)
     {
         $param = [
-            'app_key' => WebConfig::APP_KEY,
+            'app_key' => \wacai\open\config\WebConfig::APP_KEY,
             'grant_type' => 'client_credentials',
-            'timestamp' => Util::getMillisecond(),
+            'timestamp' => \wacai\open\lib\Util::getMillisecond(),
         ];
         // 签名参数组装
         $strToSign = '';
@@ -60,10 +61,10 @@ class TokenService
             $strToSign .= $val;
         }
         // 签名
-        $param['sign'] = Base64::base64url_encode(hash_hmac('sha256', $strToSign, WebConfig::APP_SECRET, true));
-        $curl = new \Curl();
+        $param['sign'] = \wacai\open\lib\Base64::base64url_encode(hash_hmac('sha256', $strToSign, \wacai\open\config\WebConfig::APP_SECRET, true));
+        $curl = new \wacai\open\lib\Curl();
         // 获取token的url
-        $token_url = WebConfig::GW_TOKEN_URL . self::URL_FETCH;
+        $token_url = \wacai\open\config\WebConfig::GW_TOKEN_URL . self::URL_FETCH;
         // 发起请求(获取token)
         $err = $curl->http_post($token_url, $param, $res);
 

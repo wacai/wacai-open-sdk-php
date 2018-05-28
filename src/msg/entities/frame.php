@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\msg\entities;
 /**
  * Web socket(frame帧-包体)
  * Class Frame

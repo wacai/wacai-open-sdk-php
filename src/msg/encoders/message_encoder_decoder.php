@@ -1,5 +1,5 @@
 <?php
-
+namespace wacai\open\msg\encoders;
 class MessageEncoder
 {
     /**message encode
