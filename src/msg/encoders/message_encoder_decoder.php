@@ -24,7 +24,7 @@ class MessageEncoder
      */
     public static function decode($message_length, $message_body)
     {
-        $message = new Message();
+        $message = new \wacai\open\msg\entities\Message();
         $unpack_format = "nmsg_key_length";
 
         // msg key length

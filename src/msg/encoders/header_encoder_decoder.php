@@ -12,7 +12,7 @@ class HeaderEncoder
      */
     public static function decode($header)
     {
-        $msg_header = new MessageHeader();
+        $msg_header = new \wacai\open\msg\entities\MessageHeader();
         $unpack_format = "nflag/ncode/nresp_code/Nopaque/ntopic_length";
         $arr_unpack = unpack($unpack_format, $header);
         $msg_header->flag = $arr_unpack["flag"];

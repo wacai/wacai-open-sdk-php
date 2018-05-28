@@ -32,6 +32,11 @@ class HttpClient
      */
     public function http_post_json($json_data, $is_debug = false, &$res)
     {
+        // 检查apiName and apiVersion
+        if(empty($this->api_name) || empty($this->api_version)){
+            throw new \Exception("Api name or version is null");      
+        }
+        
         $body_md5 = '';
         if (!isset($json_data) || strlen($json_data) == 0) {
             $body_md5 = "1B2M2Y8AsgTpgAmY7PhCfg==";
@@ -40,23 +45,29 @@ class HttpClient
             $body_md5 = base64_encode(md5($json_data, true));
         }
 
+        // 检查token是否为空
+        if(is_object($this->token) && !empty($this->token)){
+            // access token
+            $access_token = $this->token->getAccessToken();
+            if(empty($access_token)){
+                throw new \Exception("token is null");
+            }
+        } else{
+            throw new \Exception("获取token失败,请检测app_key/app_secret");
+        }
+
         // 时间戳
         $time_stamp = \wacai\open\lib\Util::getMillisecond();
-
-        // 如果$this->token为非token对象，则再次获取token
-        if(!is_object($this->token)){
-            $this->token = $this->token_service->getToken();
-        }
-        // access token
-        $access_token = $this->token->getAccessToken();
         // http-header
         $param_header = [
             'x-wac-version' => \wacai\open\config\WebConfig::X_WAC_VERSION,
             'x-wac-timestamp' => $time_stamp,
             'x-wac-access-token' => $access_token,
         ];
+        
         //排序(计算的header按照headerName的字母表升序排列)
         ksort($param_header);
+        
         // 组装head-string
         $headerString = '';
         foreach ($param_header as $key => $val) {
@@ -66,7 +77,8 @@ class HttpClient
 
         // 待签名的数据
         $strToSign = $this->api_name . '|' . $this->api_version . '|' . $headerString . '|' . $body_md5;
-        // 签名(signature)
+        
+        // 已签名(signature)
         $signature = \wacai\open\lib\Base64::base64url_encode(hash_hmac('sha256', $strToSign, \wacai\open\config\WebConfig::APP_SECRET, true));
 
         $curl = new \wacai\open\lib\Curl();
@@ -75,6 +87,7 @@ class HttpClient
         $curl->add_header("x-wac-timestamp: " . $time_stamp);
         $curl->add_header("x-wac-access-token: " . $access_token);
         $curl->add_header("x-wac-signature: " . $signature);
+        
         // 需要调试时开启(查看request/reponse...) 不需要时设置为：false
         $curl->set_verbose($is_debug);
 

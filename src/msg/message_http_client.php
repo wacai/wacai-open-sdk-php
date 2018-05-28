@@ -35,11 +35,11 @@ class HttpClientMessage
         }
 
         // Request构建
-        $header = new MessageHeader();
+        $header = new \wacai\open\msg\entities\MessageHeader();
         $header->flag = 0;
         $header->code = 1;
         // 异步处理时需要替换
-        $header->opaque = Util::rand(100000, 999999);
+        $header->opaque = \wacai\open\lib\Util::rand(100000, 999999);
         $header->topic = $topic;
 
         $message = null;
@@ -67,17 +67,17 @@ class HttpClientMessage
         }
 
         // 构建请求header
-        $header = new MessageHeader();
+        $header = new \wacai\open\msg\entities\MessageHeader();
         $header->flag = 0;
         $header->code = 5;
         // 异步处理时需要替换
-        $header->opaque = Util::rand(100000, 999999);
+        $header->opaque = \wacai\open\lib\Util::rand(100000, 999999);
         $header->topic = $topic;
         $ext_fields = [];
         $ext_fields["offset"] = $offset;
         $header->ext_fields = $ext_fields;
 
-        $ack_result = new AckResult();
+        $ack_result = new \wacai\open\msg\entities\AckResult();
         $frame = $this->sync($header, null, "Ack");
         if (!empty($frame)) {
             $resp_header = $frame->header;
@@ -108,11 +108,11 @@ class HttpClientMessage
             die("message is nul(push)");
         }
 
-        $header = new MessageHeader();
+        $header = new \wacai\open\msg\entities\MessageHeader();
         $header->flag = 0;
         $header->code = 7;
         // 异步处理时需要替换
-        $header->opaque = Util::rand(100000, 999999);
+        $header->opaque = \wacai\open\lib\Util::rand(100000, 999999);
         $header->topic = $topic;
 
         $body = new Body();
@@ -173,7 +173,7 @@ class HttpClientMessage
     {
         $frame = null;
         // request
-        $bin_request = FrameEncoder::encode($header, $body);
+        $bin_request = \wacai\open\msg\encoders\FrameEncoder::encode($header, $body);
 
         while (true) {
             // 请求(二进制通信)
@@ -187,7 +187,7 @@ class HttpClientMessage
             }
 
             // 解析响应
-            $frame = FrameEncoder::decode($bin_response);
+            $frame = \wacai\open\msg\encoders\FrameEncoder::decode($bin_response);
             // 获取到服务端响应,解码退出
             if ($frame != null && $frame->header_length > 0) {
                 break;
@@ -216,9 +216,9 @@ class HttpClientMessage
         if(!$this->client->connected){ 
             echo ("Connected to MQ Server");
             $auth_header = $this->get_auth_header();
-            $this->client = new Swoole\Client\WebSocket(WebConfig::GW_MESSAGE_URL
-                , WebConfig::GW_MESSAGE_URL_PORT
-                , WebConfig::GW_MESSAGE_URL_PATH
+            $this->client = new \Swoole\Client\WebSocket(\wacai\open\config\WebConfig::GW_MESSAGE_URL
+                , \wacai\open\config\WebConfig::GW_MESSAGE_URL_PORT
+                , \wacai\open\config\WebConfig::GW_MESSAGE_URL_PATH
                 , $auth_header);
 
             if (!$this->client->connect()) {
@@ -237,9 +237,9 @@ class HttpClientMessage
     private function get_auth_header()
     {
         // Timestamp
-        $time_stamp = Util::getMillisecond();
+        $time_stamp = \wacai\open\lib\Util::getMillisecond();
         // 后面替换为服务端ip地址
-        $server_ip = Util::get_server_ip();
+        $server_ip = \wacai\open\lib\Util::get_server_ip();
         if (empty($server_ip)) {
             $server_ip = "127.0.0.1";
         }
@@ -247,10 +247,10 @@ class HttpClientMessage
         $process_id = getmypid();
 
         // text_plain(for signature)
-        $text_plain = WebConfig::APP_KEY . $server_ip . $process_id . $time_stamp;
+        $text_plain = \wacai\open\config\WebConfig::APP_KEY . $server_ip . $process_id . $time_stamp;
         // sign
-        $signature = Base64::base64url_encode(hash_hmac('sha256', $text_plain, WebConfig::APP_SECRET, true));
-        $arr_x_wac = array('appkey' => WebConfig::APP_KEY, 'text' => $text_plain, 'sign' => $signature);
+        $signature = \wacai\open\lib\Base64::base64url_encode(hash_hmac('sha256', $text_plain, \wacai\open\config\WebConfig::APP_SECRET, true));
+        $arr_x_wac = array('appkey' => \wacai\open\config\WebConfig::APP_KEY, 'text' => $text_plain, 'sign' => $signature);
         $x_wac_json = json_encode($arr_x_wac);
 
         // Auth headers

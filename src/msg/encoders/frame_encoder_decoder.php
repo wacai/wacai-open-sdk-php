@@ -18,7 +18,7 @@ class FrameEncoder
      */
     public static function decode($bin_message)
     {
-        $frame = new Frame();
+        $frame = new \wacai\open\msg\entities\Frame();
         $unpack_format = "Ntotal_length/nheader_length";
         // unpack total_length and header_length
         $arr_package = unpack($unpack_format, $bin_message);
