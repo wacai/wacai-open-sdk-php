@@ -211,15 +211,21 @@ class HttpClientMessage
      */
     private function init()
     {
-        $auth_header = $this->get_auth_header();
-        $this->client = new Swoole\Client\WebSocket(WebConfig::GW_MESSAGE_URL
-            , WebConfig::GW_MESSAGE_URL_PORT
-            , WebConfig::GW_MESSAGE_URL_PATH
-            , $auth_header);
+        // 判断client是否已经连接
+        if(!$this->client->connected){ 
+            echo ("Connected to MQ Server");
+            $auth_header = $this->get_auth_header();
+            $this->client = new Swoole\Client\WebSocket(WebConfig::GW_MESSAGE_URL
+                , WebConfig::GW_MESSAGE_URL_PORT
+                , WebConfig::GW_MESSAGE_URL_PATH
+                , $auth_header);
 
-        if (!$this->client->connect()) {
-            echo "Connect to MQ server failed.\n";
-            exit;
+            if (!$this->client->connect()) {
+                echo "Connect to MQ server failed.\n";
+                exit;
+            }
+        }else{
+            echo ("Start to connect MQ Server");
         }
     }
 

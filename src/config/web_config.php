@@ -12,9 +12,9 @@ class  WebConfig
     // 消息网关端口
     const GW_MESSAGE_URL_PORT = 80;
     // App_key(for测试)
-    const APP_KEY = "63ypw88wkpv9";//"fsxd8a885fm8";
+    const APP_KEY = "fsxd8a885fm8";//"fsxd8a885fm8";
     // App_secret(for测试)
-    const APP_SECRET = "251f1e7412464a10bc2abd939d827637";//"0f88a1b5ec034120bb6194119dc16359";
+    const APP_SECRET = "0f88a1b5ec034120bb6194119dc16359";//"0f88a1b5ec034120bb6194119dc16359";
     // WAC_Version
     const X_WAC_VERSION = "4";
     // 当前编码
