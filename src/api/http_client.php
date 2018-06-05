@@ -19,9 +19,6 @@ class HttpClient
     {
         $this->api_name = $api_name;
         $this->api_version = $api_version;
-        // token初始化
-        $this->token_service = new \wacai\open\token\TokenService();
-        $this->token = $this->token_service->getToken();
     }
 
     /**
@@ -36,24 +33,31 @@ class HttpClient
         if(empty($this->api_name) || empty($this->api_version)){
             throw new \Exception("Api name or version is null");      
         }
-        
+
+        // token初始化
+        if(empty($this->token)){
+            $this->token_service = new \wacai\open\token\TokenService();
+            $this->token = $this->token_service->getToken();
+            // 检查token是否为空
+            if(is_object($this->token) && !empty($this->token)){
+                // access token
+                $access_token = $this->token->getAccessToken();
+                if(empty($access_token)){
+                    throw new \Exception("token is null");
+                }
+            } else{
+                throw new \Exception("获取token失败,请检测app_key/app_secret");
+            }
+        }else{
+            $access_token = $this->token->getAccessToken();
+        }
+
         $body_md5 = '';
         if (!isset($json_data) || strlen($json_data) == 0) {
             $body_md5 = "1B2M2Y8AsgTpgAmY7PhCfg==";
         } else {
             // 业务数据md
             $body_md5 = base64_encode(md5($json_data, true));
-        }
-
-        // 检查token是否为空
-        if(is_object($this->token) && !empty($this->token)){
-            // access token
-            $access_token = $this->token->getAccessToken();
-            if(empty($access_token)){
-                throw new \Exception("token is null");
-            }
-        } else{
-            throw new \Exception("获取token失败,请检测app_key/app_secret");
         }
 
         // 时间戳

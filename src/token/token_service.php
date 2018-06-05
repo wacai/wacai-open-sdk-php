@@ -66,6 +66,7 @@ class TokenService
         // 获取token的url
         $token_url = \wacai\open\config\WebConfig::GW_TOKEN_URL . self::URL_FETCH;
         // 发起请求(获取token)
+        echo "Start fetch token\r\n";
         $err = $curl->http_post($token_url, $param, $res);
 
         if ($err != NULL) {
