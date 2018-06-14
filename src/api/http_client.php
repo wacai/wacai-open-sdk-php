@@ -5,7 +5,7 @@ require_once dirname(__DIR__) . '/libs/base64.php';
 require_once dirname(__DIR__) . '/config/web_config.php';
 require_once dirname(__DIR__) . '/libs/utils.php';
 require_once dirname(__DIR__) . '/libs/cache/local_cache.php';
-require_once dirname(__DIR__). '/token/token_service.php';
+require_once dirname(__DIR__) . '/token/token_service.php';
 
 class HttpClient
 {
@@ -13,6 +13,7 @@ class HttpClient
     private $api_version;
     private $token_service;
     private $token;
+    private static $token_file_path = \wacai\open\config\WebConfig::APP_KEY . '.txt';
 
     // Token服务
     public function __construct($api_name, $api_version)
@@ -140,12 +141,11 @@ class HttpClient
     }
 
     private function get_token_from_file(){
-        $token_file_path = './token/'+ \wacai\open\config\WebConfig::APP_KEY + '.txt'; 
-        if(!file_exists($token_file_path)){
+        if(!file_exists(self::$token_file_path)){
             return;
         }
         // 读取
-        $token = unserialize(file_get_contents($token_file_path));
+        $token = unserialize(file_get_contents(self::$token_file_path));
         if(!empty($token)){
             //print_r('读取token from file');
         }
@@ -156,15 +156,14 @@ class HttpClient
         if(empty($token)){
             return;
         }
-        // 检测token文件是否存在
-        $token_file_path = './token/'+ \wacai\open\config\WebConfig::APP_KEY + '.txt';  
-        if(file_exists($token_file_path)){
-            unlink($token_file_path);
+        // 检测token文件是否存在 
+        if(file_exists(self::$token_file_path)){
+            unlink(self::$token_file_path);
         }
         // token序列化
         $token_string = serialize($token);
         // 序列化存储到文件
-        $fh = fopen($token_file_path, "w");
+        $fh = fopen(self::$token_file_path, "w");
         fwrite($fh, $token_string);
         fclose($fh);
         //print_r('写入token to file');

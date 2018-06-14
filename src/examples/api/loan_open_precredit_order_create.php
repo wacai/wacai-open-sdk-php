@@ -38,7 +38,7 @@ $body_data = '{
   }
 }';
 // Api调用(true开启debug调试,false=非debug模式)
-$client_api->http_post_json($body_data, true, $res);
+$client_api->http_post_json($body_data, false, $res);
 // 查看调动结果
 var_dump($res);
 ?>
