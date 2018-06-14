@@ -34,23 +34,8 @@ class HttpClient
             throw new \Exception("Api name or version is null");      
         }
 
-        // token初始化
-        if(empty($this->token)){
-            $this->token_service = new \wacai\open\token\TokenService();
-            $this->token = $this->token_service->getToken();
-            // 检查token是否为空
-            if(is_object($this->token) && !empty($this->token)){
-                // access token
-                $access_token = $this->token->getAccessToken();
-                if(empty($access_token)){
-                    throw new \Exception("token is null");
-                }
-            } else{
-                throw new \Exception("获取token失败,请检测app_key/app_secret");
-            }
-        }else{
-            $access_token = $this->token->getAccessToken();
-        }
+        // 加载获取access_token
+        $access_token = $this->load_access_token();
 
         $body_md5 = '';
         if (!isset($json_data) || strlen($json_data) == 0) {
@@ -103,12 +88,86 @@ class HttpClient
             throw new Exception("请求出错" . $res);
         } else {
             // 检查是否token过期
-            $isExpireToken = $this->token_service->checkExpire($res);
-            if ($isExpireToken) {
-                // 如果token过期，则强制缓存刷新
-                $this->token_service->getToken(true);
-            }
+            $this->check_refresh_token($res);
         }
+    }
+
+    // 检查token是否过期(过期的话重新加载)
+    private function check_refresh_token($res){
+      // 检查是否token过期
+      if(empty($this->token_service)){
+        $this->token_service = new \wacai\open\token\TokenService();
+      }
+      // 检查是否token过期
+      $is_expire = $this->token_service->checkExpire($res);
+      if($is_expire){
+        $this->token_service->getToken(true);
+        // 检查token是否为空
+        if(is_object($this->token) && !empty($this->token)){
+            // access token
+            $this->save_token_to_file($this->token);
+        }
+      }
+    }
+
+    // Acces_token加载
+    private function load_access_token(){
+          // token初始化
+        if(empty($this->token)){
+            // 首先从文件加载token
+            $this->token = $this->get_token_from_file();
+            // 如果加载失败 则再次获取(调用token服务)
+            if(empty($this->token)){
+                $this->token_service = new \wacai\open\token\TokenService();
+                $this->token = $this->token_service->getToken();
+                // 检查token是否为空
+                if(is_object($this->token) && !empty($this->token)){
+                    // access token
+                    $access_token = $this->token->getAccessToken();
+                    $this->save_token_to_file($this->token);
+                }
+            }else{
+                 $access_token = $this->token->getAccessToken();
+            }
+        }else{
+            $access_token = $this->token->getAccessToken();
+        } 
+
+        if(empty($access_token)){
+            throw new \Exception("token is null");
+        } 
+        return $access_token; 
+    }
+
+    private function get_token_from_file(){
+        $token_file_path = './token/'+ \wacai\open\config\WebConfig::APP_KEY + '.txt'; 
+        if(!file_exists($token_file_path)){
+            return;
+        }
+        // 读取
+        $token = unserialize(file_get_contents($token_file_path));
+        if(!empty($token)){
+            //print_r('读取token from file');
+        }
+        return $token;
+    }
+
+    private function save_token_to_file($token){
+        if(empty($token)){
+            return;
+        }
+        // 检测token文件是否存在
+        $token_file_path = './token/'+ \wacai\open\config\WebConfig::APP_KEY + '.txt';  
+        if(file_exists($token_file_path)){
+            unlink($token_file_path);
+        }
+        // token序列化
+        $token_string = serialize($token);
+        // 序列化存储到文件
+        $fh = fopen($token_file_path, "w");
+        fwrite($fh, $token_string);
+        fclose($fh);
+        //print_r('写入token to file');
     }
 }
 
