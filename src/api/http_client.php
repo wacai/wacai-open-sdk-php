@@ -68,11 +68,17 @@ class HttpClient
         }
         $headerString = substr($headerString, 0, strlen($headerString) - 1);
 
+        var_dump($headerString);
+
         // 待签名的数据
         $strToSign = $this->api_name . '|' . $this->api_version . '|' . $headerString . '|' . $body_md5;
+
+        var_dump($strToSign);
         
         // 已签名(signature)
         $signature = \wacai\open\lib\Base64::base64url_encode(hash_hmac('sha256', $strToSign, \wacai\open\config\WebConfig::APP_SECRET, true));
+
+        var_dump($signature);
 
         $curl = new \wacai\open\lib\Curl();
         // 设置请求的header

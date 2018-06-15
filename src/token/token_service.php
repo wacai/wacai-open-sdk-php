@@ -66,11 +66,10 @@ class TokenService
         // 获取token的url
         $token_url = \wacai\open\config\WebConfig::GW_TOKEN_URL . self::URL_FETCH;
         // 发起请求(获取token)
-        echo "Start fetch token\r\n";
         $err = $curl->http_post($token_url, $param, $res);
 
         if ($err != NULL) {
-            echo "获取token请求出错!";
+            throw new Exception("获取token请求出错,请核对app_key/app_secret");
         } else {
             // token字符串解析
             return $this->parse($res);
@@ -102,7 +101,7 @@ class TokenService
         $err = $curl->http_post($refresh_token_url, $param, $res);
 
         if ($err != NULL) {
-            echo "请求出错!";
+            throw new Exception("Refresh token请求出错");
         }else {
             // token字符串解析
             return $this->parse($res);
