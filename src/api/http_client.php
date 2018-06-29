@@ -39,7 +39,8 @@ class HttpClient
         }
 
         // 加载获取access_token
-        $access_token = $this->load_access_token();
+        //$access_token = $this->load_access_token();
+        $access_token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhcHAiOjM1NywicmFuZCI6IjE1MzAyNzk4MjcyNDVMb3Z1Z0oiLCJpc3MiOiJXQUMgT1BFTiBQTEFURk9STSIsImV4cCI6MTUzMTE0MzgyN30.I2Efy00hJ-cM0KbqAKOYbUpu_xVBfsFdm8qhOeuAjhaRC20W6P6F-qURPPE_NpzMHDIgmUZJyo2cMoE0mnTGig";
 
         $body_md5 = '';
         if (!isset($json_data) || strlen($json_data) == 0) {
@@ -68,17 +69,11 @@ class HttpClient
         }
         $headerString = substr($headerString, 0, strlen($headerString) - 1);
 
-        var_dump($headerString);
-
         // 待签名的数据
         $strToSign = $this->api_name . '|' . $this->api_version . '|' . $headerString . '|' . $body_md5;
-
-        var_dump($strToSign);
         
         // 已签名(signature)
         $signature = \wacai\open\lib\Base64::base64url_encode(hash_hmac('sha256', $strToSign, \wacai\open\config\WebConfig::APP_SECRET, true));
-
-        var_dump($signature);
 
         $curl = new \wacai\open\lib\Curl();
         // 设置请求的header
@@ -98,7 +93,7 @@ class HttpClient
             throw new Exception("请求出错" . $res);
         } else {
             // 检查是否token过期
-            $this->check_refresh_token($res);
+            //$this->check_refresh_token($res);
         }
     }
 
@@ -160,9 +155,6 @@ class HttpClient
         }
         // 读取
         $token = unserialize(file_get_contents($cache_file_path));
-        if(!empty($token)){
-            //print_r('读取token from file');
-        }
         return $token;
     }
 
@@ -181,7 +173,6 @@ class HttpClient
         $fh = fopen($cache_file_path, "w");
         fwrite($fh, $token_string);
         fclose($fh);
-        //print_r('写入token to file');
     }                                   
 }
 ?>
