@@ -39,8 +39,7 @@ class HttpClient
         }
 
         // 加载获取access_token
-        //$access_token = $this->load_access_token();
-        $access_token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhcHAiOjM1NywicmFuZCI6IjE1MzAyNzk4MjcyNDVMb3Z1Z0oiLCJpc3MiOiJXQUMgT1BFTiBQTEFURk9STSIsImV4cCI6MTUzMTE0MzgyN30.I2Efy00hJ-cM0KbqAKOYbUpu_xVBfsFdm8qhOeuAjhaRC20W6P6F-qURPPE_NpzMHDIgmUZJyo2cMoE0mnTGig";
+        $access_token = $this->load_access_token();
 
         $body_md5 = '';
         if (!isset($json_data) || strlen($json_data) == 0) {
@@ -93,7 +92,7 @@ class HttpClient
             throw new Exception("请求出错" . $res);
         } else {
             // 检查是否token过期
-            //$this->check_refresh_token($res);
+            $this->check_refresh_token($res);
         }
     }
 
@@ -106,7 +105,7 @@ class HttpClient
       // 检查是否token过期
       $is_expire = $this->token_service->checkExpire($res);
       if($is_expire){
-        $this->token_service->getToken(true);
+        $this->token = $this->token_service->getToken(true);
         // 检查token是否为空
         if(is_object($this->token) && !empty($this->token)){
             // access token
