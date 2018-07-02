@@ -1,8 +1,10 @@
 <?php
 namespace wacai\open\msg;
+set_time_limit(0);
 define("WEBPATH", str_replace("\\", "/", __DIR__));
 require_once dirname(__DIR__) . "/libs/lib_config.php";
 require_once dirname(__DIR__) . "/libs/utils.php";
+require_once dirname(__DIR__) . "/libs/debug_util.php";
 require_once dirname(__DIR__) . "/libs/base64.php";
 require_once dirname(__DIR__) . "/config/web_config.php";
 require_once "entities/ack_result.php";
@@ -16,6 +18,7 @@ class HttpClientMessage
 {
     // web socket client
     private $client;
+    private $is_initialized = false;
 
     public function __construct()
     {
@@ -31,7 +34,8 @@ class HttpClientMessage
     public function pull($topic)
     {
         if (empty($topic)) {
-            die("topic is nul(pull)");
+            \wacai\open\lib\DebugUtil::print_debug("topic is nul(pull)");
+            return;
         }
 
         // Request构建
@@ -44,7 +48,7 @@ class HttpClientMessage
 
         $message = null;
         $frame = $this->sync($header, null, "Pull");
-        if (!empty($frame)) {
+        if (!empty($frame) && count($frame->message_list)>0) {
             $message = $frame->message_list[0];
         }
 
@@ -60,10 +64,12 @@ class HttpClientMessage
     public function ack($topic, $offset)
     {
         if (empty($topic)) {
-            die("topic is nul(ack)");
+            \wacai\open\lib\DebugUtil::print_debug("topic is nul(ack)");
+            return;
         }
         if (!is_numeric($offset)) {
-            die("offset is invalid(ack)");
+            \wacai\open\lib\DebugUtil::print_debug("offset is invalid(ack)");
+            return;
         }
 
         // 构建请求header
@@ -122,24 +128,19 @@ class HttpClientMessage
         $frame = null;
         // request
         $bin_request = FrameEncoder::encode($header, $body);
-        while (true) {
-            // 请求(二进制通信)
-            $this->client->send($bin_request, "bin");
+        
+        // 请求(二进制通信)
+        $this->client->send($bin_request, "bin");
 
-            // 响应
-            $bin_response = $this->client->recv();
-            if ($bin_response === false) {
-                die('response is null(push)');
-                break;
-            }
-
-            // 解析响应
-            $frame = FrameEncoder::decode($bin_response);
-            // 判定退出
-            if ($frame != null && $frame->header_length > 0) {
-                break;
-            }
+        // 响应
+        $bin_response = $this->client->recv();
+        if ($bin_response === false) {
+            \wacai\open\lib\DebugUtil::print_debug('response is null(push)');
         }
+
+        // 解析响应
+        $frame = FrameEncoder::decode($bin_response);
+        
         return $frame;
     }
 
@@ -175,32 +176,26 @@ class HttpClientMessage
         // request
         $bin_request = \wacai\open\msg\encoders\FrameEncoder::encode($header, $body);
 
-        while (true) {
-            // 请求(二进制通信)
-            $this->client->send($bin_request, "bin");
+        // 请求(二进制通信)
+        $this->client->send($bin_request, "bin");
 
-            // 响应
-            $bin_response = $this->client->recv();
-            if ($bin_response === false) {
-                die("Response is null," . $flag);
-                break;
-            }
-
-            // 解析响应
-            $frame = \wacai\open\msg\encoders\FrameEncoder::decode($bin_response);
-            // 获取到服务端响应,解码退出
-            if ($frame != null && $frame->header_length > 0) {
-                break;
-            }
+        // 响应
+        $bin_response = $this->client->recv();
+        if ($bin_response === false) {
+            \wacai\open\lib\DebugUtil::print_debug("Response is null" . $flag);
+            return $frame;
         }
 
-        if (!empty($frame) && $frame->message_list > 0) {
+        // 解析响应
+        $frame = \wacai\open\msg\encoders\FrameEncoder::decode($bin_response);
+        // 获取到服务端响应,解码退出
+        if (!empty($frame) && count($frame->message_list) > 0) {
             $res_header = $frame->header;
             // 同步时，比较resp_code==header->code是否相同来区分操作(pull/ack/push)
             // 如果相同，则继续处理 否则就服务端处理错误
             if ($res_header->resp_code != $header->code) {
-                echo "Resp_code<>request-code,MQ Server 处理错误";
-                $frame = null;
+                \wacai\open\lib\DebugUtil::print_debug("Resp_code<>request-code,MQ Server 处理错误");
+                return $frame;
             }
         }
 
@@ -212,26 +207,31 @@ class HttpClientMessage
      */
     private function init()
     {
-        // 判断client是否已经连接
-        if(!$this->client->connected){ 
-            echo ("Connected to MQ Server");
-            $auth_header = $this->get_auth_header();
-            $this->client = new \Swoole\Client\WebSocket(\wacai\open\config\WebConfig::GW_MESSAGE_URL
-                , \wacai\open\config\WebConfig::GW_MESSAGE_URL_PORT
-                , \wacai\open\config\WebConfig::GW_MESSAGE_URL_PATH
-                , $auth_header);
-
-            if (!$this->client->connect()) {
-                echo "Connect to MQ server failed.\n";
-                exit;
-            }
-        }else{
-            echo ("Start to connect MQ Server");
+        if($this->is_initialized===true){
+            return;
         }
+        
+        // 判断client是否已经连接
+        \wacai\open\lib\DebugUtil::print_debug("Start to connect MQ Server");
+        $auth_header = $this->get_auth_header();
+        $this->client = new \Swoole\Client\WebSocket(\wacai\open\config\WebConfig::GW_MESSAGE_URL
+            , \wacai\open\config\WebConfig::GW_MESSAGE_URL_PORT
+            , \wacai\open\config\WebConfig::GW_MESSAGE_URL_PATH
+            , $auth_header);
+
+        if (!$this->client->connect()) {
+            \wacai\open\lib\DebugUtil::print_debug("Connect to MQ server failed");
+        }
+        else{
+            \wacai\open\lib\DebugUtil::print_debug("Connected to MQ Server");
+        } 
+        
+        // 初始化完毕
+        $is_initialized = true;     
     }
 
     /**
-     * 获取Authen header
+     * 获取Authentication header
      * @return string
      */
     private function get_auth_header()

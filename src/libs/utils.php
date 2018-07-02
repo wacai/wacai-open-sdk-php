@@ -26,10 +26,12 @@ class Util
      */
     function get_server_ip()
     {
+        // 默认本机ip
+        $server_ip = '127.0.0.1';
         if (isset($_SERVER)) {
-            if ($_SERVER['SERVER_ADDR']) {
+            if (isset($_SERVER['SERVER_ADDR'])) {
                 $server_ip = $_SERVER['SERVER_ADDR'];
-            } else {
+            } else if(isset($_SERVER['LOCAL_ADDR'])){
                 $server_ip = $_SERVER['LOCAL_ADDR'];
             }
         } else {

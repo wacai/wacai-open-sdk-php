@@ -4,6 +4,7 @@ require_once dirname(__DIR__) . '/libs/curl.php';
 require_once dirname(__DIR__) . '/libs/base64.php';
 require_once dirname(__DIR__) . '/config/web_config.php';
 require_once dirname(__DIR__) . '/libs/utils.php';
+require_once dirname(__DIR__) . '/libs/debug_util.php';
 require_once dirname(__DIR__) . '/libs/cache/local_cache.php';
 require_once dirname(__DIR__) . '/token/token_service.php';
 
@@ -21,6 +22,10 @@ class HttpClient
     // Token服务
     public function __construct($api_name, $api_version)
     {
+        // 检查apiName and apiVersion
+        if(empty($api_name) || empty($api_version)){
+            throw new \Exception("Api name or version is null(from http_post_json)");
+        }
         $this->api_name = $api_name;
         $this->api_version = $api_version;
     }
@@ -31,13 +36,14 @@ class HttpClient
      * @param bool $is_debug 是否开启调试
      * @param ref $res response结果
      */
-    public function http_post_json($json_data, $is_debug = false, &$res)
+    public function http_post_json($json_data, &$res)
     {
-        // 检查apiName and apiVersion
-        if(empty($this->api_name) || empty($this->api_version)){
-            throw new \Exception("Api name or version is null");      
+        if(empty($json_data)){
+            throw new \Exception("json_data is null(from http_post_json)");
         }
-
+        if(empty(json_decode($json_data))){
+            throw new \Exception("invalid json_data(from http_post_json)");
+        }
         // 加载获取access_token
         $access_token = $this->load_access_token();
 
@@ -81,8 +87,8 @@ class HttpClient
         $curl->add_header("x-wac-access-token: " . $access_token);
         $curl->add_header("x-wac-signature: " . $signature);
         
-        // 需要调试时开启(查看request/reponse...) 不需要时设置为：false
-        $curl->set_verbose($is_debug);
+        // 需要调试时开启(查看request/reponse...) 默认设置：false
+        $curl->set_verbose(\wacai\open\config\WebConfig::IS_DEBUG);
 
         // 业务请求
         $uri = \wacai\open\config\WebConfig::GW_URL . '/' . $this->api_name . '/' . $this->api_version;
