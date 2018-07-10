@@ -7,7 +7,7 @@ $api_name = "api.test.post.fixed";
 $api_version = "1.0";
 // Http Client Api初始化
 $client_api = new HttpClient($api_name, $api_version);
-$client_api->http_post_json("", false, $res);
+$client_api->http_post_json("", $res);
 // 查看调动结果
 var_dump($res);
 ?>
