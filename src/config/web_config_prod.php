@@ -19,5 +19,7 @@ class  WebConfig
     const X_WAC_VERSION = "4";
     // 当前编码
     const DEFAULT_ENCODING = "UTF-8";
+    // 是否调试模式
+    const IS_DEBUG = false;
 }
 ?>
